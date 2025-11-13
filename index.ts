@@ -9,6 +9,7 @@ import orders from "./src/routes/orders.js";
 import reviews from "./src/routes/reviews.js";
 import analytics from "./src/routes/analytics.js";
 import registers from "./src/routes/registers.js";
+import users from "./src/routes/users.js";
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use("/orders", orders);
 app.use("/reviews", reviews);
 app.use("/analytics", analytics);
 app.use("/registers", registers);
+app.use("/users", users);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log("API on http://localhost:" + port));
