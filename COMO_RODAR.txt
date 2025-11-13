@@ -1,0 +1,18 @@
+# Edécio Delivery API — Como rodar
+
+1) Instalar deps
+   npm install
+
+2) Primeira vez (ou se quiser resetar o banco):
+   npx prisma migrate dev --name init
+   npm run seed
+   # Para zerar depois: npx prisma migrate reset && npm run seed
+
+3) Rodar a API:
+   npm run dev
+
+API: http://localhost:3333
+
+Logins:
+- Admin: admin@edecio.delivery / admin123
+- Cliente: cliente@edecio.delivery / 123456

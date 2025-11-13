@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) @map("id")
+  name      String   @map("nome")
+  email     String   @unique @map("email")
+  password  String   @map("senha")
+  role      Role     @default(USER) @map("papel")
+  orders    Order[]
+  reviews   Review[]
+  createdAt DateTime @default(now()) @map("criado_em")
+  updatedAt DateTime @updatedAt @map("atualizado_em")
+
+  @@map("usuario")
+}
+
+enum Role {
+  USER  @map("USUARIO")
+  ADMIN @map("ADMIN")
+  @@map("papel")
+}
+
+model Restaurant {
+  id        Int        @id @default(autoincrement()) @map("id")
+  name      String     @unique @map("nome")
+  imageUrl  String?    @map("imagem_url")
+  category  String?    @map("categoria")
+  items     Item[]
+  orders    Order[]
+  reviews   Review[]
+  createdAt DateTime   @default(now()) @map("criado_em")
+  updatedAt DateTime   @updatedAt @map("atualizado_em")
+
+  @@map("restaurante")
+}
+
+model Item {
+  id            Int        @id @default(autoincrement()) @map("id")
+  featured      Boolean    @default(false) @map("destaque")
+  name          String     @map("nome")
+  description   String?    @map("descricao")
+  priceCents    Int        @map("preco_centavos")
+  imageUrl      String?    @map("imagem_url")
+  restaurantId  Int        @map("restaurante_id")
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderItems    OrderItem[]
+  createdAt     DateTime   @default(now()) @map("criado_em")
+  updatedAt     DateTime   @updatedAt @map("atualizado_em")
+
+  @@map("item")
+}
+
+model Order {
+  id            Int         @id @default(autoincrement()) @map("id")
+  status        OrderStatus @default(PENDING) @map("status")
+  userId        Int         @map("usuario_id")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurantId  Int         @map("restaurante_id")
+  restaurant    Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+  totalCents    Int         @map("total_centavos")
+  address       String      @map("endereco")
+  review        Review?
+  createdAt     DateTime    @default(now()) @map("criado_em")
+  updatedAt     DateTime    @updatedAt @map("atualizado_em")
+
+  @@map("pedido")
+}
+
+model OrderItem {
+  id         Int    @id @default(autoincrement()) @map("id")
+  orderId    Int    @map("pedido_id")
+  itemId     Int    @map("item_id")
+  qty        Int    @map("quantidade")
+  priceCents Int    @map("preco_centavos")
+  item       Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  order      Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("item_pedido")
+}
+
+model Review {
+  id           Int        @id @default(autoincrement()) @map("id")
+  rating       Int        @map("nota")
+  comment      String?    @map("comentario")
+  orderId      Int        @unique @map("pedido_id")
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId       Int        @map("usuario_id")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurantId Int        @map("restaurante_id")
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now()) @map("criado_em")
+  updatedAt    DateTime   @updatedAt @map("atualizado_em")
+
+  @@map("avaliacao")
+}
+
+enum OrderStatus {
+  PENDING          @map("PENDENTE")
+  CONFIRMED        @map("CONFIRMADO")
+  PREPARING        @map("PREPARANDO")
+  OUT_FOR_DELIVERY @map("A_CAMINHO")
+  DELIVERED        @map("ENTREGUE")
+  CANCELED         @map("CANCELADO")
+  @@map("status_pedido")
+}
