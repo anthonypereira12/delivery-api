@@ -3,10 +3,9 @@
   "version": "4.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch index.ts",
-    "vercel-build": "tsc && prisma generate && prisma migrate deploy",
-    "postinstall": "prisma generate",
-    "run-seed": "npm run seed"
+    "dev": "npx ts-node-dev --respawn index.ts",
+    "vercel-build": "npx prisma migrate deploy",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
