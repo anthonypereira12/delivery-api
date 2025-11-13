@@ -46,7 +46,7 @@ model Item {
   featured      Boolean    @default(false) @map("destaque")
   name          String     @map("nome")
   description   String?    @map("descricao")
-  priceCents    Int        @map("preco_centavos")
+  priceCents    Decimal    @db.Decimal(10,2) @map("preco_centavos")
   imageUrl      String?    @map("imagem_url")
   restaurantId  Int        @map("restaurante_id")
   restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
